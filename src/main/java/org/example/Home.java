@@ -17,10 +17,17 @@ public class Home {
     private JButton addArea;
     private JButton addMoni;
     private JButton addPara;
+    private JScrollPane scrollPane;
 
     public Home() {
         // Inizializzazione della GUI
         initializeTable();
+
+        // Impostazione dei pulsanti nascosti
+        register.setVisible(false);
+        addArea.setVisible(false);
+        addMoni.setVisible(false);
+        addPara.setVisible(false);
     }
 
     private void initializeTable() {
@@ -46,6 +53,10 @@ public class Home {
 
             // Impostazione della tabella GUI
             table1.setModel(tableModel);
+            table1.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+            // Aggiunta della tabella a uno JScrollPane
+            scrollPane.setViewportView(table1);
 
         } catch (Exception e) {
             e.printStackTrace();
