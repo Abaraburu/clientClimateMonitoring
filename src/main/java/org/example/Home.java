@@ -2,9 +2,6 @@ package org.example;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.List;
@@ -38,6 +35,15 @@ public class Home {
 
         // Configurazione del comportamento per il tasto Invio nella textField1
         textField1.addActionListener(e -> cercaAreaGeografica());
+
+        // Configurazione del pulsante login
+        login.addActionListener(e -> {
+            JFrame loginFrame = new JFrame("Login Operatore");
+            loginFrame.setContentPane(new Login().getPanel());
+            loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            loginFrame.pack();
+            loginFrame.setVisible(true);
+        });
     }
 
     private void initializeTable() {
@@ -135,7 +141,6 @@ public class Home {
         frame.setContentPane(home.panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setSize(1000, 600);
         frame.setVisible(true);
     }
 }
