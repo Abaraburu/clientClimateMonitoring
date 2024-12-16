@@ -25,10 +25,7 @@ public class Home {
         initializeTable();
 
         // Impostazione dei pulsanti nascosti
-        register.setVisible(false);
-        addArea.setVisible(false);
-        addMoni.setVisible(false);
-        addPara.setVisible(false);
+        hideOperatorButtons();
 
         // Configurazione pulsante di ricerca
         search.addActionListener(e -> cercaAreaGeografica());
@@ -39,11 +36,25 @@ public class Home {
         // Configurazione del pulsante login
         login.addActionListener(e -> {
             JFrame loginFrame = new JFrame("Login Operatore");
-            loginFrame.setContentPane(new Login().getPanel());
+            loginFrame.setContentPane(new Login(this).getPanel());
             loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             loginFrame.pack();
             loginFrame.setVisible(true);
         });
+    }
+
+    public void hideOperatorButtons() {
+        register.setVisible(false);
+        addArea.setVisible(false);
+        addMoni.setVisible(false);
+        addPara.setVisible(false);
+    }
+
+    public void showOperatorButtons() {
+        register.setVisible(true);
+        addArea.setVisible(true);
+        addMoni.setVisible(true);
+        addPara.setVisible(true);
     }
 
     private void initializeTable() {
