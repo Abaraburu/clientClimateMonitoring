@@ -19,12 +19,16 @@ public class Home {
     private JButton addPara;
     private JScrollPane scrollPane;
     private JSlider slider1;
+    private JLabel raggio;
 
     private boolean isLoggedIn = false;
 
     public Home() {
         // Inizializzazione della GUI
         initializeTable();
+
+        // Raggio coordinate
+        initializeSlider();
 
         // Impostazione dei pulsanti nascosti
         hideOperatorButtons();
@@ -121,9 +125,16 @@ public class Home {
         }
     }
 
+    private void initializeSlider() {
+        slider1.addChangeListener(e -> {
+            int value = slider1.getValue();
+            String formattedValue = String.format("%02d", value);
+            raggio.setText("Raggio, da 0km a 50km: " + formattedValue + " km");
+        });
+    }
+
     private void cercaAreaGeografica() {
         try {
-            // Connessione al server RMI
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
             ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
 
@@ -135,13 +146,12 @@ public class Home {
 
             List<Map<String, String>> results;
             if (input.contains(",")) {
-                // Ricerca per coordinate
                 String[] coords = input.split(",");
                 double latitude = Double.parseDouble(coords[0].trim());
                 double longitude = Double.parseDouble(coords[1].trim());
-                results = stub.searchByCoordinates(latitude, longitude);
+                double radius = slider1.getValue();
+                results = stub.searchByCoordinates(latitude, longitude, radius);
             } else {
-                // Ricerca per nome o altro criterio
                 results = stub.searchByName(input);
             }
 
@@ -150,17 +160,18 @@ public class Home {
                 return;
             }
 
-            // Aggiornamento della tabella con i risultati
-            DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Nome ASCII", "ID Luogo"}, 0) {
+            DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Nome ASCII", "ID Luogo", "Distanza (km)"}, 0) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
                     return false;
                 }
             };
+
             for (Map<String, String> row : results) {
                 tableModel.addRow(new Object[]{
                         row.get("nome_ascii"),
-                        row.get("id_luogo")
+                        row.get("id_luogo"),
+                        row.get("distance") // Assicurati che questa chiave corrisponda al nome del Map
                 });
             }
             table1.setModel(tableModel);
@@ -172,12 +183,15 @@ public class Home {
     }
 
     public static void main(String[] args) {
-        // Creazione e visualizzazione della GUI principale
-        JFrame frame = new JFrame("Home");
-        Home home = new Home();
-        frame.setContentPane(home.panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Home");
+            Home home = new Home();
+            frame.setContentPane(home.panel1);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.pack();
+            frame.setSize(1000, 600);
+            frame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
+            frame.setVisible(true);
+        });
     }
 }
