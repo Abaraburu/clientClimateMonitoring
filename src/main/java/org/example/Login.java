@@ -31,8 +31,8 @@ public class Login {
                 if (isValid) {
                     JOptionPane.showMessageDialog(null, "Accesso riuscito!", "Login", JOptionPane.INFORMATION_MESSAGE);
 
-                    // Rendi visibili i pulsanti
-                    home.showOperatorButtons();
+                    // Notifica a Home che il login è stato effettuato
+                    home.onLoginSuccess();
 
                     // Chiudi la finestra di login
                     SwingUtilities.getWindowAncestor(panel1).dispose();

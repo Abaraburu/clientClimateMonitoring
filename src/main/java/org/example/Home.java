@@ -20,6 +20,8 @@ public class Home {
     private JScrollPane scrollPane;
     private JSlider slider1;
 
+    private boolean isLoggedIn = false;
+
     public Home() {
         // Inizializzazione della GUI
         initializeTable();
@@ -33,14 +35,38 @@ public class Home {
         // Configurazione del comportamento per il tasto Invio nella textField1
         textField1.addActionListener(e -> cercaAreaGeografica());
 
-        // Configurazione del pulsante login
+        // Configurazione del pulsante login/logout
         login.addActionListener(e -> {
-            JFrame loginFrame = new JFrame("Login Operatore");
-            loginFrame.setContentPane(new Login(this).getPanel());
-            loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            loginFrame.pack();
-            loginFrame.setVisible(true);
+            if (isLoggedIn) {
+                performLogout();
+            } else {
+                performLogin();
+            }
         });
+    }
+
+    private void performLogin() {
+        JFrame loginFrame = new JFrame("Login Operatore");
+        loginFrame.setContentPane(new Login(this).getPanel());
+        loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        loginFrame.pack();
+        loginFrame.setVisible(true);
+    }
+
+    public void onLoginSuccess() {
+        isLoggedIn = true;
+        login.setText("Logout"); // Cambia il testo del pulsante
+        showOperatorButtons(); // Mostra i pulsanti per gli operatori
+    }
+
+    private void performLogout() {
+        int confirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler effettuare il logout?", "Conferma Logout", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            isLoggedIn = false;
+            login.setText("Login Operatore"); // Ripristina il testo del pulsante
+            hideOperatorButtons(); // Nasconde i pulsanti per gli operatori
+            JOptionPane.showMessageDialog(null, "Logout effettuato con successo.", "Logout", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     public void hideOperatorButtons() {
