@@ -55,6 +55,7 @@ public class Home {
         loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         loginFrame.pack();
         loginFrame.setVisible(true);
+        loginFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
     }
 
     public void onLoginSuccess() {
