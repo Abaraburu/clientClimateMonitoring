@@ -1,5 +1,7 @@
 package org.example;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.rmi.registry.LocateRegistry;
@@ -206,6 +208,14 @@ public class Home {
     }
 
     public static void main(String[] args) {
+        try {
+            // Imposta il tema FlatDarkLaf
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Errore durante l'impostazione del tema: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+        }
+
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Home");
             Home home = new Home();
