@@ -47,6 +47,8 @@ public class Home {
                 performLogin();
             }
         });
+
+        register.addActionListener(e -> openRegisterOperatoreForm());
     }
 
     private void performLogin() {
@@ -56,6 +58,15 @@ public class Home {
         loginFrame.pack();
         loginFrame.setVisible(true);
         loginFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
+    }
+
+    private void openRegisterOperatoreForm() {
+        JFrame registerFrame = new JFrame("Registrazione Operatore");
+        registerFrame.setContentPane(new RegisterOperatore().getPanel());
+        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        registerFrame.pack();
+        registerFrame.setVisible(true);
+        registerFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
     }
 
     public void onLoginSuccess() {
