@@ -3,11 +3,11 @@ package org.example;
 import javax.swing.*;
 
 public class RegisterCentroMonitoraggio {
-    private JPanel mainPanel;
+    private JButton aggiungiButton;
     private JTextField textFieldNome;
     private JTextField textFieldIndirizzo;
-    private JScrollPane JScrollPaneAreeInteresse;
-    private JButton aggiungiButton;
+    private JScrollPane JScrollPaneAree;
+    private JPanel mainPanel;
 
     public JPanel getPanel() {
         return mainPanel;

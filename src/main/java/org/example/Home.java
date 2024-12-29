@@ -49,6 +49,8 @@ public class Home {
         });
 
         register.addActionListener(e -> openRegisterOperatoreForm());
+
+        addMoni.addActionListener(e -> openRegisterMonitoraggioForm());
     }
 
     private void performLogin() {
@@ -63,6 +65,15 @@ public class Home {
     private void openRegisterOperatoreForm() {
         JFrame registerFrame = new JFrame("Registrazione Operatore");
         registerFrame.setContentPane(new RegisterOperatore().getPanel());
+        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        registerFrame.pack();
+        registerFrame.setVisible(true);
+        registerFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
+    }
+
+    private void openRegisterMonitoraggioForm() {
+        JFrame registerFrame = new JFrame("Registrazione Operatore");
+        registerFrame.setContentPane(new RegisterCentroMonitoraggio().getPanel());
         registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         registerFrame.pack();
         registerFrame.setVisible(true);
