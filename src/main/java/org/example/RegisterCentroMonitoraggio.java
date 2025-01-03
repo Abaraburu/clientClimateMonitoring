@@ -28,7 +28,7 @@ public class RegisterCentroMonitoraggio {
             ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
 
             System.out.println("Recupero delle aree di monitoraggio...");
-            List<Map<String, String>> areas = stub.getMonitoringAreas();
+            List<Map<String, String>> areas = stub.getAllData(); // Recupera tutte le aree senza filtri
 
             System.out.println("Dati ricevuti: " + areas.size() + " aree trovate.");
 
@@ -80,19 +80,18 @@ public class RegisterCentroMonitoraggio {
                 return;
             }
 
-            System.out.println("Connessione al server RMI...");
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
             ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
 
-            // Verifica che non ci siano duplicati
-            boolean isDuplicate = stub.checkDuplicateMonitoringCenter(name, address);
-            if (isDuplicate) {
+            // Verifica duplicati
+            if (stub.checkDuplicateMonitoringCenter(name, address)) {
                 JOptionPane.showMessageDialog(null, "Esiste già un centro di monitoraggio con lo stesso nome o indirizzo.", "Errore", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
+            // Procedi con l'aggiunta del centro di monitoraggio
             DefaultTableModel model = (DefaultTableModel) tableAree.getModel();
-            List<Integer> selectedAreaIds = new ArrayList<>(); // Utilizzo di ArrayList
+            List<Integer> selectedAreaIds = new ArrayList<>();
 
             for (int i = 0; i < model.getRowCount(); i++) {
                 Boolean isSelected = (Boolean) model.getValueAt(i, 0);
@@ -106,14 +105,12 @@ public class RegisterCentroMonitoraggio {
                 return;
             }
 
-            System.out.println("Invio dati al server...");
             boolean success = stub.registerMonitoringCenter(name, address, selectedAreaIds);
 
             if (success) {
                 JOptionPane.showMessageDialog(null, "Centro di monitoraggio registrato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
                 SwingUtilities.getWindowAncestor(mainPanel).dispose(); // Chiude la finestra
             }
-
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Errore durante la registrazione: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
