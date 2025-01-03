@@ -33,7 +33,7 @@ public class Home {
         initializeSlider();
 
         // Impostazione dei pulsanti nascosti
-        hideOperatorButtons();
+        //hideOperatorButtons(); RIMOSSO MOMENTANEAMENTE PER VELOCIZZARE IL PROCESSO DI TEST E DEVELOPING DELL APPLICAZIONE, DA RIAGGIUNGERE IN VERSIONE FINALE
 
         // Configurazione pulsante di ricerca
         search.addActionListener(e -> cercaAreaGeografica());
@@ -74,8 +74,15 @@ public class Home {
     }
 
     private void openRegisterMonitoraggioForm() {
-        JFrame registerFrame = new JFrame("Registrazione Operatore");
-        registerFrame.setContentPane(new RegisterCentroMonitoraggio().getPanel());
+        JFrame registerFrame = new JFrame("Aggiungi Centro di Monitoraggio");
+        try {
+            RegisterCentroMonitoraggio registerCentro = new RegisterCentroMonitoraggio();
+            registerFrame.setContentPane(registerCentro.getPanel());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Errore durante l'apertura della finestra: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            return;
+        }
         registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         registerFrame.pack();
         registerFrame.setVisible(true);
@@ -164,13 +171,12 @@ public class Home {
             ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
 
             String input = textField1.getText().trim();
-            if (input.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Inserire un valore per la ricerca.", "Errore", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
             List<Map<String, String>> results;
-            if (input.contains(",")) {
+
+            if (input.isEmpty()) {
+                // Recupera tutti i dati ordinati alfabeticamente
+                results = stub.getMinimalLocationData();
+            } else if (input.contains(",")) {
                 String[] coords = input.split(",");
                 double latitude = Double.parseDouble(coords[0].trim());
                 double longitude = Double.parseDouble(coords[1].trim());
@@ -196,7 +202,7 @@ public class Home {
                 tableModel.addRow(new Object[]{
                         row.get("nome_ascii"),
                         row.get("id_luogo"),
-                        row.get("distance") // Assicurati che questa chiave corrisponda al nome del Map
+                        row.get("distance") != null ? row.get("distance") : ""
                 });
             }
             table1.setModel(tableModel);
