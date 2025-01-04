@@ -33,7 +33,7 @@ public class Home {
         initializeSlider();
 
         // Impostazione dei pulsanti nascosti
-        //hideOperatorButtons(); RIMOSSO MOMENTANEAMENTE PER VELOCIZZARE IL PROCESSO DI TEST E DEVELOPING DELL APPLICAZIONE, DA RIAGGIUNGERE IN VERSIONE FINALE
+        hideOperatorButtons();
 
         // Configurazione pulsante di ricerca
         search.addActionListener(e -> cercaAreaGeografica());
@@ -55,6 +55,8 @@ public class Home {
         addMoni.addActionListener(e -> openRegisterMonitoraggioForm());
 
         addArea.addActionListener(e -> openRegisterAreaForm());
+
+        addPara.addActionListener(e -> openRegisterParametriForm());
     }
 
     private void performLogin() {
@@ -100,6 +102,15 @@ public class Home {
         registerFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
     }
 
+    private void openRegisterParametriForm() {
+        JFrame registerFrame = new JFrame("Aggiungi Area di Interesse");
+        registerFrame.setContentPane(new RegisterParametriClimatici().getPanel());
+        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        registerFrame.pack();
+        registerFrame.setVisible(true);
+        registerFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
+    }
+
     public void onLoginSuccess() {
         isLoggedIn = true;
         login.setText("Logout"); // Cambia il testo del pulsante
@@ -109,9 +120,10 @@ public class Home {
     private void performLogout() {
         int confirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler effettuare il logout?", "Conferma Logout", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
+            SessionManager.setLoggedInUser(null); // Reset dell'utente autenticato
             isLoggedIn = false;
-            login.setText("Login Operatore"); // Ripristina il testo del pulsante
-            hideOperatorButtons(); // Nasconde i pulsanti per gli operatori
+            login.setText("Login Operatore");
+            hideOperatorButtons();
             JOptionPane.showMessageDialog(null, "Logout effettuato con successo.", "Logout", JOptionPane.INFORMATION_MESSAGE);
         }
     }

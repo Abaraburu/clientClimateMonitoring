@@ -49,12 +49,9 @@ public class Login {
                 boolean isValid = stub.validateCredentials(username, password);
 
                 if (isValid) {
-                    JOptionPane.showMessageDialog(null, "Accesso riuscito!", "Login", JOptionPane.INFORMATION_MESSAGE);
-
-                    // Notifica a Home che il login è stato effettuato
+                    SessionManager.setLoggedInUser(username); // Salva l'utente loggato
+                    //JOptionPane.showMessageDialog(null, "Accesso riuscito!", "Login", JOptionPane.INFORMATION_MESSAGE); ridondante
                     home.onLoginSuccess();
-
-                    // Chiudi la finestra di login
                     SwingUtilities.getWindowAncestor(panel1).dispose();
                 } else {
                     JOptionPane.showMessageDialog(null, "Credenziali errate!", "Errore", JOptionPane.ERROR_MESSAGE);
