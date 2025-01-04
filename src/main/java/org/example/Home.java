@@ -53,6 +53,8 @@ public class Home {
         register.addActionListener(e -> openRegisterOperatoreForm());
 
         addMoni.addActionListener(e -> openRegisterMonitoraggioForm());
+
+        addArea.addActionListener(e -> openRegisterAreaForm());
     }
 
     private void performLogin() {
@@ -83,6 +85,15 @@ public class Home {
             e.printStackTrace();
             return;
         }
+        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        registerFrame.pack();
+        registerFrame.setVisible(true);
+        registerFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
+    }
+
+    private void openRegisterAreaForm() {
+        JFrame registerFrame = new JFrame("Aggiungi Area di Interesse");
+        registerFrame.setContentPane(new RegisterAreaInteresse().getPanel());
         registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         registerFrame.pack();
         registerFrame.setVisible(true);
