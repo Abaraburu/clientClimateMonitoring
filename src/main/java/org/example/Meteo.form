@@ -72,7 +72,9 @@
         <children>
           <component id="8fede" class="javax.swing.JTable" binding="mediatabella">
             <constraints/>
-            <properties/>
+            <properties>
+              <enabled value="false"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
@@ -87,7 +89,9 @@
         <children>
           <component id="75ed7" class="javax.swing.JTable" binding="modatabella">
             <constraints/>
-            <properties/>
+            <properties>
+              <enabled value="false"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
@@ -105,12 +109,16 @@
             <preferred-size width="-1" height="50"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <enabled value="true"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="a98d6" class="javax.swing.JTable" binding="medianatabella">
             <constraints/>
-            <properties/>
+            <properties>
+              <enabled value="false"/>
+            </properties>
           </component>
         </children>
       </scrollpane>

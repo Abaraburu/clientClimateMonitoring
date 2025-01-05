@@ -13,7 +13,7 @@ public class Meteo {
     private JTable mediatabella;      // Tabella per le medie dei parametri climatici
     private JTable modatabella;       // Tabella per le mode dei parametri climatici
     private JTable medianatabella;    // Tabella per le mediane dei parametri climatici
-    private JPanel jpanel1;        // Pannello principale
+    private JPanel jpanel1;           // Pannello principale
 
     public Meteo(String areaName) {
         nomeareageografica.setText(areaName); // Imposta il nome dell'area selezionata
@@ -21,26 +21,28 @@ public class Meteo {
         populateAverageTable(areaName);      // Popola la tabella con le medie
         populateModeTable(areaName);         // Popola la tabella con le mode
         populateMedianTable(areaName);       // Popola la tabella con le mediane
+        addRowClickListener(areaName);       // Aggiunge il listener per i click sulle righe
     }
 
     private void populateClimaticDataTable(String areaName) {
         try {
-            // Connessione al server RMI
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
             ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
 
-            // Recupera i dati climatici per l'area selezionata
             List<Map<String, String>> climaticData = stub.getClimaticData(areaName);
 
-            // Configura le intestazioni
             String[] columnNames = {
                     "Data Rilevazione", "Ora", "Vento", "Umidità", "Pressione",
                     "Temperatura", "Precipitazioni", "Altitudine Ghiacciai", "Massa Ghiacciai"
             };
 
-            DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+            DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false; // Impedisce modifiche ai dati
+                }
+            };
 
-            // Aggiungi i dati climatici
             for (Map<String, String> row : climaticData) {
                 tableModel.addRow(new Object[]{
                         row.get("data_di_rilevazione"),
@@ -55,7 +57,6 @@ public class Meteo {
                 });
             }
 
-            // Imposta il modello nella tabella
             tableAll.setModel(tableModel);
             tableAll.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
@@ -65,6 +66,36 @@ public class Meteo {
         }
     }
 
+    private void addRowClickListener(String areaName) {
+        tableAll.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (evt.getClickCount() == 1) { // Singolo clic
+                    int selectedRow = tableAll.getSelectedRow();
+                    int selectedColumn = tableAll.getSelectedColumn();
+
+                    if (selectedRow != -1 && selectedColumn > 1) { // Escludi colonne non pertinenti
+                        String parameter = tableAll.getColumnName(selectedColumn).toLowerCase();
+                        String noteColumn = parameter + "_nota";
+                        try {
+                            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+                            ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
+                            String comment = stub.getCommentForParameter(areaName, noteColumn);
+
+                            if (comment == null || comment.isEmpty()) {
+                                JOptionPane.showMessageDialog(null, "Nessun commento", "Info", JOptionPane.INFORMATION_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(null, comment, "Commento - " + parameter, JOptionPane.INFORMATION_MESSAGE);
+                            }
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null, "Errore nel recupero del commento: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     private void populateAverageTable(String areaName) {
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
@@ -72,11 +103,15 @@ public class Meteo {
 
             Map<String, Double> averages = stub.getAverages(areaName);
 
-            // Configura il modello per visualizzare i dati in riga
-            String[] columnNames = averages.keySet().toArray(new String[0]); // Parametri come intestazioni di colonna
-            Object[] rowData = averages.values().toArray(); // Valori come singola riga
+            String[] columnNames = averages.keySet().toArray(new String[0]);
+            Object[] rowData = averages.values().toArray();
 
-            DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{rowData}, columnNames);
+            DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{rowData}, columnNames) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
 
             mediatabella.setModel(tableModel);
             mediatabella.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -94,11 +129,15 @@ public class Meteo {
 
             Map<String, Integer> modes = stub.getModes(areaName);
 
-            // Configura il modello per visualizzare i dati in riga
-            String[] columnNames = modes.keySet().toArray(new String[0]); // Parametri come intestazioni di colonna
-            Object[] rowData = modes.values().toArray(); // Valori come singola riga
+            String[] columnNames = modes.keySet().toArray(new String[0]);
+            Object[] rowData = modes.values().toArray();
 
-            DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{rowData}, columnNames);
+            DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{rowData}, columnNames) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
 
             modatabella.setModel(tableModel);
             modatabella.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -116,11 +155,15 @@ public class Meteo {
 
             Map<String, Double> medians = stub.getMedians(areaName);
 
-            // Configura il modello per visualizzare i dati in riga
-            String[] columnNames = medians.keySet().toArray(new String[0]); // Parametri come intestazioni di colonna
-            Object[] rowData = medians.values().toArray(); // Valori come singola riga
+            String[] columnNames = medians.keySet().toArray(new String[0]);
+            Object[] rowData = medians.values().toArray();
 
-            DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{rowData}, columnNames);
+            DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{rowData}, columnNames) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
 
             medianatabella.setModel(tableModel);
             medianatabella.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);

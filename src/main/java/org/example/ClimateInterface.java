@@ -56,4 +56,7 @@ public interface ClimateInterface extends Remote {
 
     // Metodo per ricevere la mediana
     Map<String, Double> getMedians(String areaName) throws RemoteException;
+
+    // Metodo per ottenere il commento di un parametro climatico
+    String getCommentForParameter(String areaName, String parameterNoteColumn) throws RemoteException;
 }

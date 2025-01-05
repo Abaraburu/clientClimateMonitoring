@@ -175,8 +175,12 @@ public class Home {
                     if (evt.getClickCount() == 2) { // Doppio clic
                         int selectedRow = table1.getSelectedRow();
                         if (selectedRow != -1) {
-                            String areaName = (String) tableModel.getValueAt(selectedRow, 0);
-                            openMeteoForm(areaName);
+                            String areaName = table1.getValueAt(selectedRow, 0).toString(); // Ottieni il nome ASCII
+                            if (areaName != null && !areaName.isEmpty()) {
+                                openMeteoForm(areaName);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Nessun'area valida selezionata.", "Errore", JOptionPane.ERROR_MESSAGE);
+                            }
                         }
                     }
                 }
@@ -191,13 +195,23 @@ public class Home {
     }
 
     private void openMeteoForm(String areaName) {
-        JFrame meteoFrame = new JFrame("Meteo");
-        Meteo meteo = new Meteo(areaName);
-        meteoFrame.setContentPane(meteo.getPanel());
-        meteoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        meteoFrame.pack();
-        meteoFrame.setVisible(true);
-        meteoFrame.setLocationRelativeTo(null); // Centra la finestra
+        try {
+            if (areaName == null || areaName.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Area non valida selezionata.", "Errore", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            JFrame meteoFrame = new JFrame("Meteo - " + areaName);
+            Meteo meteo = new Meteo(areaName); // Passa il nome corretto dell'area
+            meteoFrame.setContentPane(meteo.getPanel());
+            meteoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            meteoFrame.pack();
+            meteoFrame.setVisible(true);
+            meteoFrame.setLocationRelativeTo(null); // Centra la finestra
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Errore durante l'apertura del meteo: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void initializeSlider() {
