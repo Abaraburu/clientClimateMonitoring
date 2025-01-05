@@ -1,4 +1,4 @@
-package org.example;
+package org.aglia;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import javax.swing.*;

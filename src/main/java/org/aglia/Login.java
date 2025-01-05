@@ -1,4 +1,4 @@
-package org.example;
+package org.aglia;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;

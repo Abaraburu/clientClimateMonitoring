@@ -1,4 +1,4 @@
-package org.example;
+package org.aglia;
 
 /**
  * Classe per gestire lo stato della sessione dell'applicazione.
