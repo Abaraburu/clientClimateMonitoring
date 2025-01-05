@@ -158,7 +158,7 @@ public class RegisterParametriClimatici {
                 return;
             }
 
-            // Controlla che tutti i campi numerici obbligatori siano compilati
+            // Verifica che tutti i campi numerici obbligatori siano compilati
             if (textFieldVento.getText().trim().isEmpty() ||
                     textFieldUmidita.getText().trim().isEmpty() ||
                     textFieldPressione.getText().trim().isEmpty() ||
@@ -181,14 +181,14 @@ public class RegisterParametriClimatici {
                 return;
             }
 
-            // Converte i valori obbligatori
-            int vento = Integer.parseInt(textFieldVento.getText().trim());
-            int umidita = Integer.parseInt(textFieldUmidita.getText().trim());
-            int pressione = Integer.parseInt(textFieldPressione.getText().trim());
-            int temperatura = Integer.parseInt(textFieldTemperatura.getText().trim());
-            int precipitazioni = Integer.parseInt(textFieldPrecipitazioni.getText().trim());
-            int altitudine = Integer.parseInt(textFieldAltitudine.getText().trim());
-            int massa = Integer.parseInt(textFieldMassa.getText().trim());
+            // Conversione dei valori
+            int vento = calcolaNumVento(getIntFromTextField(textFieldVento));
+            int umidita = calcolaNumUmidita(getIntFromTextField(textFieldUmidita));
+            int pressione = calcolaNumPressione(getIntFromTextField(textFieldPressione));
+            int temperatura = calcolaNumTemperatura(getIntFromTextField(textFieldTemperatura));
+            int precipitazioni = calcolaNumPrecipitazioni(getIntFromTextField(textFieldPrecipitazioni));
+            int altitudine = calcolaNumAltitudineGhiacciai(getIntFromTextField(textFieldAltitudine));
+            int massa = calcolaNumMassaGhiacciai(getIntFromTextField(textFieldMassa));
 
             // Recupera i commenti (facoltativi)
             String commentoVento = textAreaVentoCommento.getText().trim();
@@ -215,6 +215,7 @@ public class RegisterParametriClimatici {
 
             if (success) {
                 JOptionPane.showMessageDialog(null, "Parametri climatici aggiunti con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
+                SwingUtilities.getWindowAncestor(jpanel1).dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Errore durante l'aggiunta dei parametri.", "Errore", JOptionPane.ERROR_MESSAGE);
             }

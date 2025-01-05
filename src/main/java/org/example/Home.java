@@ -161,23 +161,43 @@ public class Home {
             };
 
             for (Map<String, String> row : data) {
-                tableModel.addRow(new Object[]{
-                        row.get("nome_ascii"),
-                        row.get("id_luogo")
-                });
+                tableModel.addRow(new Object[]{row.get("nome_ascii"), row.get("id_luogo")});
             }
 
             // Impostazione della tabella GUI
             table1.setModel(tableModel);
             table1.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-            // Aggiunta della tabella a uno JScrollPane
+            // Listener per rilevare clic sulla tabella
+            table1.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    if (evt.getClickCount() == 2) { // Doppio clic
+                        int selectedRow = table1.getSelectedRow();
+                        if (selectedRow != -1) {
+                            String areaName = (String) tableModel.getValueAt(selectedRow, 0);
+                            openMeteoForm(areaName);
+                        }
+                    }
+                }
+            });
+
             scrollPane.setViewportView(table1);
 
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Errore nel caricamento dei dati: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void openMeteoForm(String areaName) {
+        JFrame meteoFrame = new JFrame("Meteo");
+        Meteo meteo = new Meteo(areaName);
+        meteoFrame.setContentPane(meteo.getPanel());
+        meteoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        meteoFrame.pack();
+        meteoFrame.setVisible(true);
+        meteoFrame.setLocationRelativeTo(null); // Centra la finestra
     }
 
     private void initializeSlider() {
