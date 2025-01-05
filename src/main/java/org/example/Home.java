@@ -1,7 +1,6 @@
 package org.example;
 
 import com.formdev.flatlaf.FlatDarkLaf;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.rmi.registry.LocateRegistry;
@@ -9,287 +8,308 @@ import java.rmi.registry.Registry;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Classe principale per l'applicazione "Climate Monitoring".
+ * Fornisce l'interfaccia grafica e gestisce l'interazione dell'utente e degli operatori.
+ *
+ * @author Agliati Lorenzo 753378
+ */
 public class Home {
-    private JPanel panel1;
-    private JButton login;
-    private JTextField textField1;
-    private JButton search;
-    private JTable table1;
-    private JButton register;
-    private JButton addArea;
-    private JButton addMoni;
-    private JButton addPara;
-    private JScrollPane scrollPane;
-    private JSlider slider1;
-    private JLabel raggio;
+    private JPanel panel1; // Pannello principale della GUI
+    private JButton login; // Pulsante per il login/logout
+    private JTextField textField1; // Campo di input per la ricerca di aree geografiche
+    private JButton search; // Pulsante per effettuare la ricerca
+    private JTable table1; // Tabella per visualizzare i risultati delle ricerche
+    private JButton register; // Pulsante per registrare un nuovo operatore
+    private JButton addArea; // Pulsante per aggiungere un'area di interesse
+    private JButton addMoni; // Pulsante per aggiungere un centro di monitoraggio
+    private JButton addPara; // Pulsante per aggiungere parametri climatici
+    private JScrollPane scrollPane; // ScrollPane per contenere la tabella
+    private JSlider slider1; // Slider per selezionare il raggio di ricerca
+    private JLabel raggio; // Etichetta per visualizzare il raggio selezionato
 
-    private boolean isLoggedIn = false;
+    private boolean isLoggedIn = false; // Indica se l'utente è autenticato
 
+    /**
+     * Costruttore della classe Home.
+     * Inizializza la GUI e configura i listener degli eventi.
+     */
     public Home() {
-        // Inizializzazione della GUI
-        initializeTable();
+        initializeTable(); // Configura la tabella iniziale con i dati
+        initializeSlider(); // Configura lo slider per il raggio di ricerca
+        hideOperatorButtons(); // Nasconde i pulsanti riservati agli operatori
 
-        // Raggio coordinate
-        initializeSlider();
+        // Listener per il pulsante di ricerca
+        search.addActionListener(e -> cercaAreaGeografica()); // Effettua la ricerca geografica
 
-        // Impostazione dei pulsanti nascosti
-        hideOperatorButtons();
+        // Listener per il tasto Invio nel campo di ricerca
+        textField1.addActionListener(e -> cercaAreaGeografica()); // Permette di avviare la ricerca premendo Invio
 
-        // Configurazione pulsante di ricerca
-        search.addActionListener(e -> cercaAreaGeografica());
-
-        // Configurazione del comportamento per il tasto Invio nella textField1
-        textField1.addActionListener(e -> cercaAreaGeografica());
-
-        // Configurazione del pulsante login/logout
+        // Listener per il pulsante login/logout
         login.addActionListener(e -> {
             if (isLoggedIn) {
-                performLogout();
+                performLogout(); // Effettua il logout se l'utente è autenticato
             } else {
-                performLogin();
+                performLogin(); // Mostra la finestra di login
             }
         });
 
-        register.addActionListener(e -> openRegisterOperatoreForm());
-
-        addMoni.addActionListener(e -> openRegisterMonitoraggioForm());
-
-        addArea.addActionListener(e -> openRegisterAreaForm());
-
-        addPara.addActionListener(e -> openRegisterParametriForm());
+        // Configura i pulsanti per aprire le finestre di registrazione o aggiunta
+        register.addActionListener(e -> openRegisterOperatoreForm()); // Apre la finestra di registrazione per operatori
+        addMoni.addActionListener(e -> openRegisterMonitoraggioForm()); // Apre la finestra per aggiungere un centro di monitoraggio
+        addArea.addActionListener(e -> openRegisterAreaForm()); // Apre la finestra per aggiungere un'area di interesse
+        addPara.addActionListener(e -> openRegisterParametriForm()); // Apre la finestra per aggiungere parametri climatici
     }
 
+    /**
+     * Esegue l'operazione di login mostrando la finestra di autenticazione.
+     */
     private void performLogin() {
-        JFrame loginFrame = new JFrame("Login Operatore");
-        loginFrame.setContentPane(new Login(this).getPanel());
-        loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        loginFrame.pack();
-        loginFrame.setVisible(true);
+        JFrame loginFrame = new JFrame("Login Operatore"); // Crea il frame per il login
+        loginFrame.setContentPane(new Login(this).getPanel()); // Imposta il contenuto del frame
+        loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Configura la chiusura del frame
+        loginFrame.pack(); // Adatta le dimensioni del frame
+        loginFrame.setVisible(true); // Mostra il frame
         loginFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
     }
 
+    /**
+     * Mostra la finestra di registrazione per un nuovo operatore.
+     */
     private void openRegisterOperatoreForm() {
-        JFrame registerFrame = new JFrame("Registrazione Operatore");
-        registerFrame.setContentPane(new RegisterOperatore().getPanel());
-        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        registerFrame.pack();
-        registerFrame.setVisible(true);
+        JFrame registerFrame = new JFrame("Registrazione Operatore"); // Frame per registrazione operatori
+        registerFrame.setContentPane(new RegisterOperatore().getPanel()); // Imposta il contenuto del frame
+        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Configura la chiusura del frame
+        registerFrame.pack(); // Adatta le dimensioni del frame
+        registerFrame.setVisible(true); // Mostra il frame
         registerFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
     }
 
+    /**
+     * Mostra la finestra per aggiungere un nuovo centro di monitoraggio.
+     */
     private void openRegisterMonitoraggioForm() {
-        JFrame registerFrame = new JFrame("Aggiungi Centro di Monitoraggio");
-        try {
-            RegisterCentroMonitoraggio registerCentro = new RegisterCentroMonitoraggio();
-            registerFrame.setContentPane(registerCentro.getPanel());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Errore durante l'apertura della finestra: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-            return;
-        }
-        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        registerFrame.pack();
-        registerFrame.setVisible(true);
+        JFrame registerFrame = new JFrame("Aggiungi Centro di Monitoraggio"); // Frame per centri di monitoraggio
+        registerFrame.setContentPane(new RegisterCentroMonitoraggio().getPanel()); // Imposta il contenuto del frame
+        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Configura la chiusura del frame
+        registerFrame.pack(); // Adatta le dimensioni del frame
+        registerFrame.setVisible(true); // Mostra il frame
         registerFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
     }
 
+    /**
+     * Mostra la finestra per aggiungere un'area di interesse.
+     */
     private void openRegisterAreaForm() {
-        JFrame registerFrame = new JFrame("Aggiungi Area di Interesse");
-        registerFrame.setContentPane(new RegisterAreaInteresse().getPanel());
-        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        registerFrame.pack();
-        registerFrame.setVisible(true);
+        JFrame registerFrame = new JFrame("Aggiungi Area di Interesse"); // Frame per aree di interesse
+        registerFrame.setContentPane(new RegisterAreaInteresse().getPanel()); // Imposta il contenuto del frame
+        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Configura la chiusura del frame
+        registerFrame.pack(); // Adatta le dimensioni del frame
+        registerFrame.setVisible(true); // Mostra il frame
         registerFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
     }
 
+    /**
+     * Mostra la finestra per aggiungere parametri climatici.
+     */
     private void openRegisterParametriForm() {
-        JFrame registerFrame = new JFrame("Aggiungi Area di Interesse");
-        registerFrame.setContentPane(new RegisterParametriClimatici().getPanel());
-        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        registerFrame.pack();
-        registerFrame.setVisible(true);
+        JFrame registerFrame = new JFrame("Aggiungi Parametri Climatici"); // Frame per parametri climatici
+        registerFrame.setContentPane(new RegisterParametriClimatici().getPanel()); // Imposta il contenuto del frame
+        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Configura la chiusura del frame
+        registerFrame.pack(); // Adatta le dimensioni del frame
+        registerFrame.setVisible(true); // Mostra il frame
         registerFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
     }
 
+    /**
+     * Azione da eseguire dopo un login corretto.
+     * Mostra i pulsanti riservati agli operatori.
+     */
     public void onLoginSuccess() {
-        isLoggedIn = true;
-        login.setText("Logout"); // Cambia il testo del pulsante
-        showOperatorButtons(); // Mostra i pulsanti per gli operatori
+        isLoggedIn = true; // Imposta lo stato come autenticato
+        login.setText("Logout"); // Modifica il testo del pulsante
+        showOperatorButtons(); // Mostra i pulsanti per operatori
     }
 
+    /**
+     * Esegue l'operazione di logout, reimpostando lo stato dell'applicazione.
+     */
     private void performLogout() {
-        int confirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler effettuare il logout?", "Conferma Logout", JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(null, "Sei sicuro di voler effettuare il logout?", "Conferma Logout", JOptionPane.YES_NO_OPTION); // Mostra un popup di conferma
         if (confirm == JOptionPane.YES_OPTION) {
-            SessionManager.setLoggedInUser(null); // Reset dell'utente autenticato
-            isLoggedIn = false;
-            login.setText("Login Operatore");
-            hideOperatorButtons();
-            JOptionPane.showMessageDialog(null, "Logout effettuato con successo.", "Logout", JOptionPane.INFORMATION_MESSAGE);
+            SessionManager.setLoggedInUser(null); // Reimposta l'utente autenticato
+            isLoggedIn = false; // Aggiorna lo stato dell'autenticazione
+            login.setText("Login Operatore"); // Modifica il testo del pulsante
+            hideOperatorButtons(); // Nasconde i pulsanti per operatori
+            JOptionPane.showMessageDialog(null, "Logout effettuato con successo.", "Logout", JOptionPane.INFORMATION_MESSAGE); // Messaggio di conferma
         }
     }
 
+    /**
+     * Nasconde i pulsanti riservati agli operatori.
+     */
     public void hideOperatorButtons() {
-        register.setVisible(false);
-        addArea.setVisible(false);
-        addMoni.setVisible(false);
-        addPara.setVisible(false);
+        register.setVisible(false); // Nasconde il pulsante di registrazione
+        addArea.setVisible(false); // Nasconde il pulsante per aggiungere aree
+        addMoni.setVisible(false); // Nasconde il pulsante per aggiungere centri
+        addPara.setVisible(false); // Nasconde il pulsante per aggiungere parametri
     }
 
+    /**
+     * Mostra i pulsanti riservati agli operatori.
+     */
     public void showOperatorButtons() {
-        register.setVisible(true);
-        addArea.setVisible(true);
-        addMoni.setVisible(true);
-        addPara.setVisible(true);
+        register.setVisible(true); // Mostra il pulsante di registrazione
+        addArea.setVisible(true); // Mostra il pulsante per aggiungere aree
+        addMoni.setVisible(true); // Mostra il pulsante per aggiungere centri
+        addPara.setVisible(true); // Mostra il pulsante per aggiungere parametri
     }
 
+    /**
+     * Inizializza la tabella per mostrare i risultati delle ricerche.
+     */
     private void initializeTable() {
         try {
-            // Connessione al server RMI
-            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-            ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
+            Registry registry = LocateRegistry.getRegistry("localhost", 1099); // Recupera il registro RMI
+            ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService"); // Ottiene lo stub del servizio
+            List<Map<String, String>> data = stub.getMinimalLocationData(); // Recupera i dati minimali
 
-            // Recupero dati minimali dal server
-            List<Map<String, String>> data = stub.getMinimalLocationData();
-
-            // Configurazione del modello della tabella
-            String[] columnNames = {"Nome ASCII", "ID Luogo"};
+            String[] columnNames = {"Nome ASCII", "ID Luogo"}; // Nomi delle colonne della tabella
             DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
-                    return false;
+                    return false; // Rende la tabella non modificabile
                 }
             };
 
             for (Map<String, String> row : data) {
-                tableModel.addRow(new Object[]{row.get("nome_ascii"), row.get("id_luogo")});
+                tableModel.addRow(new Object[]{row.get("nome_ascii"), row.get("id_luogo")}); // Aggiunge righe alla tabella
             }
 
-            // Impostazione della tabella GUI
-            table1.setModel(tableModel);
-            table1.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            table1.setModel(tableModel); // Imposta il modello della tabella
+            table1.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS); // Configura la tabella per adattare le colonne
 
-            // Listener per rilevare clic sulla tabella
             table1.addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (evt.getClickCount() == 2) { // Doppio clic
-                        int selectedRow = table1.getSelectedRow();
+                    if (evt.getClickCount() == 2) { // Controlla se si tratta di un doppio clic
+                        int selectedRow = table1.getSelectedRow(); // Ottiene la riga selezionata
                         if (selectedRow != -1) {
-                            String areaName = table1.getValueAt(selectedRow, 0).toString(); // Ottieni il nome ASCII
-                            String areaId = table1.getValueAt(selectedRow, 1).toString();  // Ottieni l'ID Luogo
-                            if (areaId != null && !areaId.isEmpty()) {
-                                openMeteoForm(areaName, areaId); // Passa sia il nome che l'ID
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Nessun'area valida selezionata.", "Errore", JOptionPane.ERROR_MESSAGE);
-                            }
+                            String areaName = table1.getValueAt(selectedRow, 0).toString(); // Nome area
+                            String areaId = table1.getValueAt(selectedRow, 1).toString(); // ID area
+                            openMeteoForm(areaName, areaId); // Mostra i dettagli meteo dell'area selezionata
                         }
                     }
                 }
             });
 
-            scrollPane.setViewportView(table1);
-
+            scrollPane.setViewportView(table1); // Aggiunge la tabella al pannello di scorrimento
         } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Errore nel caricamento dei dati: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace(); // Stampa l'errore nella console
+            JOptionPane.showMessageDialog(null, "Errore nel caricamento dei dati: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE); // Mostra un popup di errore
         }
     }
 
-    // Modifica nel metodo openMeteoForm per accettare sia nome che ID
+    /**
+     * Mostra la finestra con i dettagli meteo di un'area selezionata.
+     *
+     * @param areaName Nome dell'area.
+     * @param areaId ID dell'area.
+     */
     private void openMeteoForm(String areaName, String areaId) {
-        try {
-            if (areaId == null || areaId.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Area non valida selezionata.", "Errore", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            JFrame meteoFrame = new JFrame("Meteo - " + areaName);
-            Meteo meteo = new Meteo(areaName, areaId); // Passa sia il nome che l'ID
-            meteoFrame.setContentPane(meteo.getPanel());
-            meteoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            meteoFrame.pack();
-            meteoFrame.setVisible(true);
-            meteoFrame.setLocationRelativeTo(null); // Centra la finestra
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Errore durante l'apertura del meteo: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-        }
+        JFrame meteoFrame = new JFrame("Meteo - " + areaName); // Frame per i dettagli meteo
+        meteoFrame.setContentPane(new Meteo(areaName, areaId).getPanel()); // Imposta il contenuto del frame
+        meteoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Configura la chiusura del frame
+        meteoFrame.pack(); // Adatta le dimensioni del frame
+        meteoFrame.setVisible(true); // Mostra il frame
+        meteoFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
     }
 
+    /**
+     * Configura lo slider per selezionare il raggio di ricerca.
+     */
     private void initializeSlider() {
         slider1.addChangeListener(e -> {
-            int value = slider1.getValue();
-            String formattedValue = String.format("%02d", value);
-            raggio.setText("Raggio, da 0km a 50km: " + formattedValue + " km");
+            int value = slider1.getValue(); // Ottiene il valore corrente dello slider
+            raggio.setText("Raggio: " + value + " km"); // Aggiorna l'etichetta con il valore del raggio
         });
     }
 
+    /**
+     * Effettua la ricerca di aree geografiche in base all'input fornito.
+     */
     private void cercaAreaGeografica() {
         try {
-            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-            ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
+            Registry registry = LocateRegistry.getRegistry("localhost", 1099); // Recupera il registro RMI
+            ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService"); // Ottiene lo stub del servizio
 
-            String input = textField1.getText().trim();
-            List<Map<String, String>> results;
+            String input = textField1.getText().trim(); // Ottiene il testo inserito dall'utente
+            List<Map<String, String>> results; // Lista per memorizzare i risultati della ricerca
 
             if (input.isEmpty()) {
-                // Recupera tutti i dati ordinati alfabeticamente
-                results = stub.getMinimalLocationData();
+                results = stub.getMinimalLocationData(); // Recupera tutti i dati se l'input è vuoto
             } else if (input.contains(",")) {
+                // Divide l'input per virgola per ottenere le coordinate
                 String[] coords = input.split(",");
-                double latitude = Double.parseDouble(coords[0].trim());
-                double longitude = Double.parseDouble(coords[1].trim());
-                double radius = slider1.getValue();
-                results = stub.searchByCoordinates(latitude, longitude, radius);
+                double latitude = Double.parseDouble(coords[0].trim()); // Estrae la latitudine
+                double longitude = Double.parseDouble(coords[1].trim()); // Estrae la longitudine
+                double radius = slider1.getValue(); // Ottiene il valore del raggio dallo slider
+                results = stub.searchByCoordinates(latitude, longitude, radius); // Cerca per coordinate
             } else {
-                results = stub.searchByName(input);
+                results = stub.searchByName(input); // Cerca per nome dell'area geografica
             }
 
+            // Verifica se sono stati trovati risultati
             if (results.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Nessun risultato trovato.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Nessun risultato trovato.", "Info", JOptionPane.INFORMATION_MESSAGE); // Messaggio di informazione
                 return;
             }
 
+            // Modello della tabella per visualizzare i risultati
             DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Nome ASCII", "ID Luogo", "Distanza (km)"}, 0) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
-                    return false;
+                    return false; // Rende la tabella non modificabile
                 }
             };
 
+            // Aggiunge i risultati alla tabella
             for (Map<String, String> row : results) {
                 tableModel.addRow(new Object[]{
-                        row.get("nome_ascii"),
-                        row.get("id_luogo"),
-                        row.get("distance") != null ? row.get("distance") : ""
+                        row.get("nome_ascii"), // Nome ASCII dell'area
+                        row.get("id_luogo"), // ID univoco dell'area
+                        row.get("distance") != null ? row.get("distance") : "" // Distanza (se disponibile)
                 });
             }
-            table1.setModel(tableModel);
+            table1.setModel(tableModel); // Imposta il modello per la tabella
 
         } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Errore nella ricerca: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace(); // Stampa lo stack trace per debug
+            JOptionPane.showMessageDialog(null, "Errore nella ricerca: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE); // Mostra un popup di errore
         }
     }
 
+    /**
+     * Metodo principale per avviare l'applicazione.
+     * @param args Argomenti della riga di comando.
+     */
     public static void main(String[] args) {
         try {
-            // Imposta il tema FlatDarkLaf
-            UIManager.setLookAndFeel(new FlatDarkLaf());
+            UIManager.setLookAndFeel(new FlatDarkLaf()); // Imposta il tema grafico FlatDarkLaf
         } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Errore durante l'impostazione del tema: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace(); // Stampa lo stack trace per debug
+            JOptionPane.showMessageDialog(null, "Errore durante l'impostazione del tema: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE); // Messaggio di errore
         }
 
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Home");
-            Home home = new Home();
-            frame.setContentPane(home.panel1);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.pack();
-            frame.setSize(1000, 600);
+            JFrame frame = new JFrame("Home"); // Crea il frame principale
+            Home home = new Home(); // Istanzia la classe Home
+            frame.setContentPane(home.panel1); // Imposta il pannello principale
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Configura l'azione di chiusura
+            frame.pack(); // Adatta le dimensioni del frame al contenuto
+            frame.setSize(1000, 600); // Imposta una dimensione fissa per la finestra
             frame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
-            frame.setVisible(true);
+            frame.setVisible(true); // Mostra il frame
         });
     }
 }
