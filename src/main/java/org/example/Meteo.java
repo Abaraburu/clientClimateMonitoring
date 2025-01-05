@@ -15,24 +15,24 @@ public class Meteo {
     private JTable medianatabella;    // Tabella per le mediane dei parametri climatici
     private JPanel jpanel1;           // Pannello principale
 
-    public Meteo(String areaName) {
-        nomeareageografica.setText(areaName); // Imposta il nome dell'area selezionata
-        populateClimaticDataTable(areaName);  // Popola la tabella con i dati climatici
-        populateAverageTable(areaName);      // Popola la tabella con le medie
-        populateModeTable(areaName);         // Popola la tabella con le mode
-        populateMedianTable(areaName);       // Popola la tabella con le mediane
-        addRowClickListener(areaName);       // Aggiunge il listener per i click sulle righe
+    public Meteo(String areaName, String areaId) {
+        nomeareageografica.setText(areaName); // Mostra il nome dell'area selezionata
+        populateClimaticDataTable(areaId);  // Usa l'ID per popolare i dati
+        populateAverageTable(areaId);      // Usa l'ID per le medie
+        populateModeTable(areaId);         // Usa l'ID per le mode
+        populateMedianTable(areaId);       // Usa l'ID per le mediane
+        addRowClickListener(areaId);       // Aggiunge il listener per i click sulle righe
     }
 
-    private void populateClimaticDataTable(String areaName) {
+    private void populateClimaticDataTable(String areaId) {
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
             ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
 
-            List<Map<String, String>> climaticData = stub.getClimaticData(areaName);
+            List<Map<String, String>> climaticData = stub.getClimaticDataById(Integer.parseInt(areaId));
 
             String[] columnNames = {
-                    "Data Rilevazione", "Ora", "Vento", "Umidità", "Pressione",
+                    "ID Parametro", "Data Rilevazione", "Ora", "Vento", "Umidità", "Pressione",
                     "Temperatura", "Precipitazioni", "Altitudine Ghiacciai", "Massa Ghiacciai"
             };
 
@@ -44,7 +44,9 @@ public class Meteo {
             };
 
             for (Map<String, String> row : climaticData) {
+                System.out.println("DEBUG: Popolamento riga con ID Parametro: " + row.get("id_parametro"));
                 tableModel.addRow(new Object[]{
+                        row.get("id_parametro"), // ID Parametro
                         row.get("data_di_rilevazione"),
                         row.get("ora"),
                         row.get("vento"),
@@ -60,13 +62,18 @@ public class Meteo {
             tableAll.setModel(tableModel);
             tableAll.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
+            // Nascondi la colonna ID Parametro per l'utente
+            tableAll.getColumnModel().getColumn(0).setMinWidth(0);
+            tableAll.getColumnModel().getColumn(0).setMaxWidth(0);
+            tableAll.getColumnModel().getColumn(0).setWidth(0);
+
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Errore nel caricamento dei dati climatici: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void addRowClickListener(String areaName) {
+    private void addRowClickListener(String areaId) {
         tableAll.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -75,19 +82,35 @@ public class Meteo {
                     int selectedColumn = tableAll.getSelectedColumn();
 
                     if (selectedRow != -1 && selectedColumn > 1) { // Escludi colonne non pertinenti
-                        String parameter = tableAll.getColumnName(selectedColumn).toLowerCase();
-                        String noteColumn = parameter + "_nota";
                         try {
-                            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-                            ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
-                            String comment = stub.getCommentForParameter(areaName, noteColumn);
+                            Object idParametroObj = tableAll.getValueAt(selectedRow, 0); // Ottieni ID Parametro
+                            if (idParametroObj != null) {
+                                int idParametro = Integer.parseInt(idParametroObj.toString());
 
-                            if (comment == null || comment.isEmpty()) {
-                                JOptionPane.showMessageDialog(null, "Nessun commento", "Info", JOptionPane.INFORMATION_MESSAGE);
+                                // Ottieni il nome della colonna e applica il mapping corretto
+                                String parameterName = tableAll.getColumnName(selectedColumn).toLowerCase();
+                                String parameterNoteColumn = switch (parameterName) {
+                                    case "umidità" -> "umidita_nota";
+                                    case "altitudine ghiacciai" -> "altitudineghiacciai_nota";
+                                    case "massa ghiacciai" -> "massaghiacciai_nota";
+                                    default -> parameterName + "_nota";
+                                };
+
+                                Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+                                ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
+
+                                String comment = stub.getCommentForParameterById(idParametro, parameterNoteColumn);
+
+                                if (comment == null || comment.isEmpty()) {
+                                    JOptionPane.showMessageDialog(null, "Nessun commento per questo parametro.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                                } else {
+                                    JOptionPane.showMessageDialog(null, comment, "Commento", JOptionPane.INFORMATION_MESSAGE);
+                                }
                             } else {
-                                JOptionPane.showMessageDialog(null, comment, "Commento - " + parameter, JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Nessun ID parametro selezionato.", "Errore", JOptionPane.ERROR_MESSAGE);
                             }
                         } catch (Exception e) {
+                            e.printStackTrace();
                             JOptionPane.showMessageDialog(null, "Errore nel recupero del commento: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
                         }
                     }
@@ -96,15 +119,25 @@ public class Meteo {
         });
     }
 
-    private void populateAverageTable(String areaName) {
+    private void populateAverageTable(String areaId) {
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
             ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
 
-            Map<String, Double> averages = stub.getAverages(areaName);
+            Map<String, Double> averages = stub.getAveragesById(Integer.parseInt(areaId));
+            System.out.println("DEBUG: Medie ricevute dal server = " + averages);
 
-            String[] columnNames = averages.keySet().toArray(new String[0]);
-            Object[] rowData = averages.values().toArray();
+            // Ordine specificato
+            String[] columnNames = {"Vento", "Umidità", "Pressione", "Temperatura", "Precipitazioni", "Altitudine Ghiacciai", "Massa Ghiacciai"};
+            Object[] rowData = {
+                    averages.get("vento"),
+                    averages.get("umidita"),
+                    averages.get("pressione"),
+                    averages.get("temperatura"),
+                    averages.get("precipitazioni"),
+                    averages.get("altitudineghiacciai"),
+                    averages.get("massaghiacciai")
+            };
 
             DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{rowData}, columnNames) {
                 @Override
@@ -122,15 +155,25 @@ public class Meteo {
         }
     }
 
-    private void populateModeTable(String areaName) {
+    private void populateModeTable(String areaId) {
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
             ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
 
-            Map<String, Integer> modes = stub.getModes(areaName);
+            Map<String, Integer> modes = stub.getModesById(Integer.parseInt(areaId));
+            System.out.println("DEBUG: Modes ricevute dal server = " + modes);
 
-            String[] columnNames = modes.keySet().toArray(new String[0]);
-            Object[] rowData = modes.values().toArray();
+            // Ordine specificato
+            String[] columnNames = {"Vento", "Umidità", "Pressione", "Temperatura", "Precipitazioni", "Altitudine Ghiacciai", "Massa Ghiacciai"};
+            Object[] rowData = {
+                    modes.get("vento"),
+                    modes.get("umidita"),
+                    modes.get("pressione"),
+                    modes.get("temperatura"),
+                    modes.get("precipitazioni"),
+                    modes.get("altitudineghiacciai"),
+                    modes.get("massaghiacciai")
+            };
 
             DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{rowData}, columnNames) {
                 @Override
@@ -148,15 +191,25 @@ public class Meteo {
         }
     }
 
-    private void populateMedianTable(String areaName) {
+    private void populateMedianTable(String areaId) {
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
             ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
 
-            Map<String, Double> medians = stub.getMedians(areaName);
+            Map<String, Double> medians = stub.getMediansById(Integer.parseInt(areaId));
+            System.out.println("DEBUG: Medians ricevute dal server = " + medians);
 
-            String[] columnNames = medians.keySet().toArray(new String[0]);
-            Object[] rowData = medians.values().toArray();
+            // Ordine specificato
+            String[] columnNames = {"Vento", "Umidità", "Pressione", "Temperatura", "Precipitazioni", "Altitudine Ghiacciai", "Massa Ghiacciai"};
+            Object[] rowData = {
+                    medians.get("vento"),
+                    medians.get("umidita"),
+                    medians.get("pressione"),
+                    medians.get("temperatura"),
+                    medians.get("precipitazioni"),
+                    medians.get("altitudineghiacciai"),
+                    medians.get("massaghiacciai")
+            };
 
             DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{rowData}, columnNames) {
                 @Override

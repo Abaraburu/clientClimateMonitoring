@@ -176,8 +176,9 @@ public class Home {
                         int selectedRow = table1.getSelectedRow();
                         if (selectedRow != -1) {
                             String areaName = table1.getValueAt(selectedRow, 0).toString(); // Ottieni il nome ASCII
-                            if (areaName != null && !areaName.isEmpty()) {
-                                openMeteoForm(areaName);
+                            String areaId = table1.getValueAt(selectedRow, 1).toString();  // Ottieni l'ID Luogo
+                            if (areaId != null && !areaId.isEmpty()) {
+                                openMeteoForm(areaName, areaId); // Passa sia il nome che l'ID
                             } else {
                                 JOptionPane.showMessageDialog(null, "Nessun'area valida selezionata.", "Errore", JOptionPane.ERROR_MESSAGE);
                             }
@@ -194,15 +195,16 @@ public class Home {
         }
     }
 
-    private void openMeteoForm(String areaName) {
+    // Modifica nel metodo openMeteoForm per accettare sia nome che ID
+    private void openMeteoForm(String areaName, String areaId) {
         try {
-            if (areaName == null || areaName.isEmpty()) {
+            if (areaId == null || areaId.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Area non valida selezionata.", "Errore", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             JFrame meteoFrame = new JFrame("Meteo - " + areaName);
-            Meteo meteo = new Meteo(areaName); // Passa il nome corretto dell'area
+            Meteo meteo = new Meteo(areaName, areaId); // Passa sia il nome che l'ID
             meteoFrame.setContentPane(meteo.getPanel());
             meteoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             meteoFrame.pack();
