@@ -43,7 +43,7 @@
         </constraints>
         <properties>
           <enabled value="false"/>
-          <text value="Suggerimento: clicca sul dato climatico che ti interessa per vedere l'eventuale commento!"/>
+          <text value="Clicca sul dato climatico che ti interessa per vedere l'eventuale commento!"/>
         </properties>
       </component>
       <scrollpane id="f32a">

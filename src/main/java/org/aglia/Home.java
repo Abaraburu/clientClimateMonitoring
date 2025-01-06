@@ -231,7 +231,8 @@ public class Home {
     private void initializeSlider() {
         slider1.addChangeListener(e -> {
             int value = slider1.getValue(); // Ottiene il valore corrente dello slider
-            raggio.setText("Raggio: " + value + " km"); // Aggiorna l'etichetta con il valore del raggio
+            String formattedValue = String.format("%02d", value); // Formatta il valore con due cifre utilizzando String.format
+            raggio.setText("Raggio: " + formattedValue + " km"); // Aggiorna l'etichetta con il valore del raggio
         });
     }
 

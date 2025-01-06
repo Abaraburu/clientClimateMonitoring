@@ -9,6 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Gestisce la registrazione dei parametri climatici tramite interfaccia grafica.
+ * Questa classe fornisce una GUI per inserire dati relativi al clima, come temperatura,
+ * umidità, pressione, ecc., associati a specifiche località e date.
+ *
+ * @author Agliati Lorenzo 753378
+ */
 public class RegisterParametriClimatici {
     private JComboBox<String> comboBoxLuogo;
     private JTextField textFieldData;
@@ -40,6 +47,9 @@ public class RegisterParametriClimatici {
     private static final String DATE_PATTERN = "^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\\d{4}$";
     private static final String TIME_PATTERN = "^([01]?[0-9]|2[0-3]):[0-5][0-9]$";
 
+    /**
+     * Costruttore che inizializza la GUI, popola il comboBox delle località e inizializza i listener.
+     */
     public RegisterParametriClimatici() {
         populateComboBox();
         initializePreviewListeners();
@@ -47,6 +57,10 @@ public class RegisterParametriClimatici {
         aggiungiButton.addActionListener(e -> onAddButtonClicked());
     }
 
+    /**
+     * Popola il comboBox con le località disponibili per l'utente loggato.
+     * La lista delle località viene recuperata da un servizio remoto.
+     */
     private void populateComboBox() {
         try {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
@@ -63,6 +77,9 @@ public class RegisterParametriClimatici {
         }
     }
 
+    /**
+     * Inizializza i listener per la preview dei valori numerici inseriti nei campi di testo.
+     */
     private void initializePreviewListeners() {
         textFieldVento.addKeyListener(new KeyAdapter() {
             @Override
@@ -121,6 +138,11 @@ public class RegisterParametriClimatici {
         });
     }
 
+    /**
+     * Converte il testo di un JTextField in un intero.
+     * @param textField il campo di testo da cui recuperare il numero.
+     * @return il valore intero o -1 se il testo non è convertibile in intero.
+     */
     private int getIntFromTextField(JTextField textField) {
         try {
             return Integer.parseInt(textField.getText().trim());
@@ -129,6 +151,9 @@ public class RegisterParametriClimatici {
         }
     }
 
+    /**
+     * Gestisce l'evento click del pulsante di aggiunta, validando i campi e inviando i dati al server.
+     */
     private void onAddButtonClicked() {
         try {
             // Recupera i valori dai campi
@@ -227,6 +252,11 @@ public class RegisterParametriClimatici {
         }
     }
 
+    /**
+     * Calcola il punteggio per il vento in base al valore fornito.
+     * @param valore il valore del vento.
+     * @return il punteggio da 1 (peggiore) a 5 (ottimale).
+     */
     private int calcolaNumVento(int valore) {
         if (valore >= 0 && valore <= 10) {
             return 5;
@@ -241,6 +271,11 @@ public class RegisterParametriClimatici {
         }
     }
 
+    /**
+     * Calcola il punteggio per l'umidità in base al valore fornito.
+     * @param valore il valore dell'umidità.
+     * @return il punteggio da 1 (peggiore) a 5 (ottimale).
+     */
     private int calcolaNumUmidita(int valore) {
         if (valore >= 0 && valore <= 10) {
             return 1;
@@ -264,6 +299,11 @@ public class RegisterParametriClimatici {
     }
 
     //Come scritto sul pdf con le specifiche per il progetto "indicano l’intensità del fenomeno su una scala che va da 1 (critico) a 5 (ottimale)", ho usato 5 come la * migliore per l'essere umano e 1 la peggiore
+    /**
+     * Calcola il punteggio per la pressione in base al valore fornito.
+     * @param valore il valore della pressione.
+     * @return il punteggio da 1 (peggiore) a 5 (ottimale).
+     */
     private int calcolaNumPressione(int valore) {
         if (valore >= 900 && valore <= 950) {
             return 1;
@@ -286,6 +326,11 @@ public class RegisterParametriClimatici {
         }
     }
 
+    /**
+     * Calcola il punteggio per la temperatura in base al valore fornito.
+     * @param valore il valore della temperatura.
+     * @return il punteggio da 1 (peggiore) a 5 (ottimale).
+     */
     private int calcolaNumTemperatura(int valore) {
         if (valore <= -30) {
             return 1;
@@ -308,6 +353,11 @@ public class RegisterParametriClimatici {
         }
     }
 
+    /**
+     * Calcola il punteggio per le precipitazioni in base al valore fornito.
+     * @param valore il valore delle precipitazioni.
+     * @return il punteggio da 1 (peggiore) a 5 (ottimale).
+     */
     private int calcolaNumPrecipitazioni(int valore) {
         if (valore >= 0 && valore <= 5) {
             return 5;
@@ -322,6 +372,11 @@ public class RegisterParametriClimatici {
         }
     }
 
+    /**
+     * Calcola il punteggio per l'altitudine dei ghiacciai in base al valore fornito.
+     * @param altitudineGhiacciai il valore dell'altitudine dei ghiacciai.
+     * @return il punteggio da 1 (peggiore) a 5 (ottimale).
+     */
     public static int calcolaNumAltitudineGhiacciai(int altitudineGhiacciai) {
         if (altitudineGhiacciai <= 500) {
             return 1;
@@ -336,6 +391,11 @@ public class RegisterParametriClimatici {
         }
     }
 
+    /**
+     * Calcola il punteggio per la massa dei ghiacciai in base al valore fornito.
+     * @param massaGhiacciai il valore della massa dei ghiacciai.
+     * @return il punteggio da 1 (peggiore) a 5 (ottimale).
+     */
     public static int calcolaNumMassaGhiacciai(int massaGhiacciai) {
         if (massaGhiacciai <= 100) {
             return 1;
@@ -350,6 +410,10 @@ public class RegisterParametriClimatici {
         }
     }
 
+    /**
+     * Restituisce il pannello principale della GUI.
+     * @return il pannello principale.
+     */
     public JPanel getPanel() {
         return jpanel1;
     }
