@@ -156,8 +156,8 @@ public class RegisterParametriClimatici {
      */
     private void onAddButtonClicked() {
         try {
-            // Recupera i valori dai campi
-            String username = SessionManager.getLoggedInUser(); // Ottieni l'username
+            // Recupera i valori dai campi di testo
+            String username = SessionManager.getLoggedInUser(); // Ottiene l'utente loggato
             String nomeArea = (String) comboBoxLuogo.getSelectedItem();
             String data = textFieldData.getText().trim();
             String ora = textFieldOra.getText().trim();
@@ -183,17 +183,37 @@ public class RegisterParametriClimatici {
                 return;
             }
 
-            // Verifica che tutti i campi numerici obbligatori siano compilati
-            if (textFieldVento.getText().trim().isEmpty() ||
-                    textFieldUmidita.getText().trim().isEmpty() ||
-                    textFieldPressione.getText().trim().isEmpty() ||
-                    textFieldTemperatura.getText().trim().isEmpty() ||
-                    textFieldPrecipitazioni.getText().trim().isEmpty() ||
-                    textFieldAltitudine.getText().trim().isEmpty() ||
-                    textFieldMassa.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(jpanel1, "Tutti i campi relativi ai parametri climatici devono essere compilati!", "Errore", JOptionPane.ERROR_MESSAGE);
+            // Recupera i valori dai campi di testo relativi ai parametri climatici
+            String ventoText = textFieldVento.getText().trim();
+            String umiditaText = textFieldUmidita.getText().trim();
+            String pressioneText = textFieldPressione.getText().trim();
+            String temperaturaText = textFieldTemperatura.getText().trim();
+            String precipitazioniText = textFieldPrecipitazioni.getText().trim();
+            String altitudineText = textFieldAltitudine.getText().trim();
+            String massaText = textFieldMassa.getText().trim();
+
+            // Validazione: verifica che i campi contengano solo numeri
+            if (!ventoText.matches("\\d+") ||
+                    !umiditaText.matches("\\d+") ||
+                    !pressioneText.matches("\\d+") ||
+                    !temperaturaText.matches("\\d+") ||
+                    !precipitazioniText.matches("\\d+") ||
+                    !altitudineText.matches("\\d+") ||
+                    !massaText.matches("\\d+")) {
+                JOptionPane.showMessageDialog(jpanel1,
+                        "I campi relativi ai parametri climatici devono contenere solo numeri.",
+                        "Errore", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+
+            // Conversione dei valori
+            int vento = Integer.parseInt(ventoText);
+            int umidita = Integer.parseInt(umiditaText);
+            int pressione = Integer.parseInt(pressioneText);
+            int temperatura = Integer.parseInt(temperaturaText);
+            int precipitazioni = Integer.parseInt(precipitazioniText);
+            int altitudine = Integer.parseInt(altitudineText);
+            int massa = Integer.parseInt(massaText);
 
             // Connessione al server RMI
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
@@ -206,15 +226,6 @@ public class RegisterParametriClimatici {
                 return;
             }
 
-            // Conversione dei valori
-            int vento = calcolaNumVento(getIntFromTextField(textFieldVento));
-            int umidita = calcolaNumUmidita(getIntFromTextField(textFieldUmidita));
-            int pressione = calcolaNumPressione(getIntFromTextField(textFieldPressione));
-            int temperatura = calcolaNumTemperatura(getIntFromTextField(textFieldTemperatura));
-            int precipitazioni = calcolaNumPrecipitazioni(getIntFromTextField(textFieldPrecipitazioni));
-            int altitudine = calcolaNumAltitudineGhiacciai(getIntFromTextField(textFieldAltitudine));
-            int massa = calcolaNumMassaGhiacciai(getIntFromTextField(textFieldMassa));
-
             // Recupera i commenti (facoltativi)
             String commentoVento = textAreaVentoCommento.getText().trim();
             String commentoUmidita = textAreaUmiditaCommento.getText().trim();
@@ -224,7 +235,7 @@ public class RegisterParametriClimatici {
             String commentoAltitudine = textAreaAltitudine.getText().trim();
             String commentoMassa = textAreaMassa.getText().trim();
 
-            // Invio al server
+            // Invio dei dati al server
             boolean success = stub.addClimaticParameters(
                     username, nomeArea, data, ora,
                     vento, umidita, pressione, temperatura,
@@ -244,10 +255,10 @@ public class RegisterParametriClimatici {
             } else {
                 JOptionPane.showMessageDialog(null, "Errore durante l'aggiunta dei parametri.", "Errore", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(jpanel1, "Tutti i campi relativi ai parametri climatici devono contenere valori numerici validi.", "Errore", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Errore di comunicazione: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Errore durante l'operazione: " + ex.getMessage(),
+                    "Errore", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }
