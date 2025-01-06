@@ -21,7 +21,7 @@ public class Login {
     private JLabel usernameLabel; // Etichetta per il campo username
     private JLabel passwordLabel; // Etichetta per il campo password
 
-    private Home home; // Riferimento alla finestra principale dell'applicazione
+    private clientCM home; // Riferimento alla finestra principale dell'applicazione
 
     /**
      * Costruttore della classe Login.
@@ -29,7 +29,7 @@ public class Login {
      *
      * @param home Riferimento alla finestra principale dell'applicazione.
      */
-    public Login(Home home) {
+    public Login(clientCM home) {
         this.home = home; // Inizializza il riferimento alla finestra principale
 
         // Listener per spostarsi al campo password premendo Invio

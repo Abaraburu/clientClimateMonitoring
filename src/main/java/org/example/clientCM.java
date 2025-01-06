@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * @author Agliati Lorenzo 753378
  */
-public class Home {
+public class clientCM {
     private JPanel panel1; // Pannello principale della GUI
     private JButton login; // Pulsante per il login/logout
     private JTextField textField1; // Campo di input per la ricerca di aree geografiche
@@ -31,10 +31,10 @@ public class Home {
     private boolean isLoggedIn = false; // Indica se l'utente è autenticato
 
     /**
-     * Costruttore della classe Home.
+     * Costruttore della classe clientCM.
      * Inizializza la GUI e configura i listener degli eventi.
      */
-    public Home() {
+    public clientCM() {
         initializeTable(); // Configura la tabella iniziale con i dati
         initializeSlider(); // Configura lo slider per il raggio di ricerca
         hideOperatorButtons(); // Nasconde i pulsanti riservati agli operatori
@@ -303,8 +303,8 @@ public class Home {
         }
 
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Home"); // Crea il frame principale
-            Home home = new Home(); // Istanzia la classe Home
+            JFrame frame = new JFrame("clientCM"); // Crea il frame principale
+            clientCM home = new clientCM(); // Istanzia la classe clientCM
             frame.setContentPane(home.panel1); // Imposta il pannello principale
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Configura l'azione di chiusura
             frame.pack(); // Adatta le dimensioni del frame al contenuto

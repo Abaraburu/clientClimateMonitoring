@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="clientClimateMonitoring:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/clientClimateMonitoring_jar</output-path>
+    <root id="archive" name="clientClimateMonitoring.jar">
+      <element id="module-output" name="clientClimateMonitoring" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf/3.0/flatlaf-3.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
