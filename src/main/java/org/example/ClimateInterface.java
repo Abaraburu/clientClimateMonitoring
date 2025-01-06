@@ -1,4 +1,4 @@
-package org.aglia;
+package org.example;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
