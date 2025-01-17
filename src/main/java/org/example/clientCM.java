@@ -149,7 +149,7 @@ public class clientCM {
      * Nasconde i pulsanti riservati agli operatori.
      */
     public void hideOperatorButtons() {
-        register.setVisible(false); // Nasconde il pulsante di registrazione
+        //register.setVisible(false); // Nasconde il pulsante di registrazione |Il bottone per registrare nuovi operatori è da ora sempre disponibile
         addArea.setVisible(false); // Nasconde il pulsante per aggiungere aree
         addMoni.setVisible(false); // Nasconde il pulsante per aggiungere centri
         addPara.setVisible(false); // Nasconde il pulsante per aggiungere parametri
@@ -159,7 +159,7 @@ public class clientCM {
      * Mostra i pulsanti riservati agli operatori.
      */
     public void showOperatorButtons() {
-        register.setVisible(true); // Mostra il pulsante di registrazione
+        //register.setVisible(true); // Mostra il pulsante di registrazione |Il bottone per registrare nuovi operatori è da ora sempre disponibile
         addArea.setVisible(true); // Mostra il pulsante per aggiungere aree
         addMoni.setVisible(true); // Mostra il pulsante per aggiungere centri
         addPara.setVisible(true); // Mostra il pulsante per aggiungere parametri
