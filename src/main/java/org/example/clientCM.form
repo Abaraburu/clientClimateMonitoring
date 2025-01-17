@@ -125,7 +125,7 @@
         </constraints>
         <properties>
           <enabled value="false"/>
-          <text value="Utilizza la barra di ricerca per cercarel'area o le coordinate (es: 42.352870, -72.045350). Il raggio è disponibile solo per ricerche con coordinate."/>
+          <text value="Utilizza la barra di ricerca per cercarel'area o le coordinate (es: 45.464270, 9.189510). Il raggio è disponibile solo per ricerche con coordinate."/>
         </properties>
       </component>
     </children>
