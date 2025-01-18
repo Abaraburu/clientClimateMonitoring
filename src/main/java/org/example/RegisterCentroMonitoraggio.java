@@ -22,6 +22,7 @@ public class RegisterCentroMonitoraggio {
     private JPanel mainPanel; // Pannello principale della GUI
     private JTable tableAree; // Tabella per visualizzare le aree disponibili
     private JScrollPane tableScrollPane; // Pannello di scorrimento per la tabella
+    private JCheckBox checkBoxAssegnaOperatore;
 
     /**
      * Costruttore della classe RegisterCentroMonitoraggio.
@@ -97,6 +98,16 @@ public class RegisterCentroMonitoraggio {
                 return; // Interrompe l'esecuzione se i campi sono vuoti
             }
 
+            boolean isCheckboxChecked = checkBoxAssegnaOperatore.isSelected(); // Recupera lo stato della checkbox
+
+            // Recupera l'utente attualmente loggato dal SessionManager
+            String loggedInUser = SessionManager.getLoggedInUser();
+
+            if (loggedInUser == null || loggedInUser.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Nessun utente autenticato. Effettua il login prima di continuare.", "Errore", JOptionPane.ERROR_MESSAGE);
+                return; // Interrompe l'esecuzione se nessun utente è loggato
+            }
+
             Registry registry = LocateRegistry.getRegistry("localhost", 1099); // Connessione al server RMI
             ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService"); // Ottiene lo stub remoto del servizio
 
@@ -123,7 +134,7 @@ public class RegisterCentroMonitoraggio {
             }
 
             // Invia i dati al server per registrare il centro di monitoraggio
-            boolean success = stub.registerMonitoringCenter(name, address, selectedAreaIds);
+            boolean success = stub.registerMonitoringCenter(name, address, selectedAreaIds, isCheckboxChecked, loggedInUser);
 
             if (success) {
                 JOptionPane.showMessageDialog(null, "Centro di monitoraggio registrato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE); // Messaggio di conferma
