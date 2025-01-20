@@ -69,11 +69,22 @@ public class RegisterParametriClimatici {
             String username = SessionManager.getLoggedInUser();
             List<Map<String, String>> locations = stub.getLocationsForUser(username);
 
+            // Controlla se ci sono aree disponibili
+            if (locations.isEmpty()) {
+                JOptionPane.showMessageDialog(null,
+                        "Attenzione: l'operatore non ha nessun centro di monitoraggio o il centro di monitoraggio non controlla nessuna area di interesse.",
+                        "Errore", JOptionPane.ERROR_MESSAGE);
+                return; // Interrompe l'esecuzione se non ci sono aree
+            }
+
+            // Popola la comboBox con le aree disponibili
             for (Map<String, String> location : locations) {
                 comboBoxLuogo.addItem(location.get("nome_ascii"));
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Errore nel caricamento delle aree di interesse: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Errore nel caricamento delle aree di interesse: " + e.getMessage(),
+                    "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }
 
