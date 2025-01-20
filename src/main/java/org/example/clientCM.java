@@ -27,6 +27,7 @@ public class clientCM {
     private JScrollPane scrollPane; // ScrollPane per contenere la tabella
     private JSlider slider1; // Slider per selezionare il raggio di ricerca
     private JLabel raggio; // Etichetta per visualizzare il raggio selezionato
+    private JButton modificaIlMioCentroButton;
 
     private boolean isLoggedIn = false; // Indica se l'utente è autenticato
 
@@ -153,6 +154,7 @@ public class clientCM {
         addArea.setVisible(false); // Nasconde il pulsante per aggiungere aree
         addMoni.setVisible(false); // Nasconde il pulsante per aggiungere centri
         addPara.setVisible(false); // Nasconde il pulsante per aggiungere parametri
+        modificaIlMioCentroButton.setVisible(false); // Nasconde il pulsante per modificare il centro di monitoraggio dell'operatore che ha effettuato il login.
     }
 
     /**
@@ -163,6 +165,7 @@ public class clientCM {
         addArea.setVisible(true); // Mostra il pulsante per aggiungere aree
         addMoni.setVisible(true); // Mostra il pulsante per aggiungere centri
         addPara.setVisible(true); // Mostra il pulsante per aggiungere parametri
+        modificaIlMioCentroButton.setVisible(true); // Mostra il pulsante per modificare il centro di monitoraggio dell'operatore che ha effettuato il login.
     }
 
     /**
@@ -308,7 +311,7 @@ public class clientCM {
             frame.setContentPane(home.panel1); // Imposta il pannello principale
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Configura l'azione di chiusura
             frame.pack(); // Adatta le dimensioni del frame al contenuto
-            frame.setSize(1000, 600); // Imposta una dimensione fissa per la finestra
+            frame.setSize(1300, 600); // Imposta una dimensione fissa per la finestra
             frame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
             frame.setVisible(true); // Mostra il frame
         });

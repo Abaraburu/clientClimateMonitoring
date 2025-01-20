@@ -86,21 +86,26 @@ public class RegisterOperatore {
 
         try {
             // Connessione al server RMI
-            Registry registry = LocateRegistry.getRegistry("localhost", 1099); // Recupera il registro RMI
-            ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService"); // Ottiene lo stub remoto del servizio
+            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+            ClimateInterface stub = (ClimateInterface) registry.lookup("ClimateService");
+
+            // Se non è selezionato un centro di monitoraggio, passa null
+            if (centroMonitoraggio == null || centroMonitoraggio.isEmpty()) {
+                centroMonitoraggio = null;
+            }
 
             // Invia i dati al server per registrare il nuovo operatore
             boolean success = stub.registerOperator(nome, cognome, codiceFiscale, email, username, password, centroMonitoraggio);
 
             if (success) {
-                JOptionPane.showMessageDialog(null, "Registrazione avvenuta con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE); // Messaggio di conferma
+                JOptionPane.showMessageDialog(null, "Registrazione avvenuta con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
                 SwingUtilities.getWindowAncestor(jpanel1).dispose(); // Chiude la finestra della GUI
             } else {
-                JOptionPane.showMessageDialog(null, "Errore durante la registrazione. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE); // Messaggio di errore
+                JOptionPane.showMessageDialog(null, "Errore durante la registrazione. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception ex) {
-            ex.printStackTrace(); // Stampa l'errore per il debug
-            JOptionPane.showMessageDialog(null, "Errore di comunicazione con il server: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE); // Messaggio di errore
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Errore di comunicazione con il server: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }
 
