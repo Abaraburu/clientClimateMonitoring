@@ -60,6 +60,7 @@ public class clientCM {
         addMoni.addActionListener(e -> openRegisterMonitoraggioForm()); // Apre la finestra per aggiungere un centro di monitoraggio
         addArea.addActionListener(e -> openRegisterAreaForm()); // Apre la finestra per aggiungere un'area di interesse
         addPara.addActionListener(e -> openRegisterParametriForm()); // Apre la finestra per aggiungere parametri climatici
+        modificaIlMioCentroButton.addActionListener(e -> openModCentroMonForm()); // Apre la finestra per modificare il centro di monitoraggio dell'operatore corrente
     }
 
     /**
@@ -116,6 +117,18 @@ public class clientCM {
     private void openRegisterParametriForm() {
         JFrame registerFrame = new JFrame("Aggiungi Parametri Climatici"); // Frame per parametri climatici
         registerFrame.setContentPane(new RegisterParametriClimatici().getPanel()); // Imposta il contenuto del frame
+        registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Configura la chiusura del frame
+        registerFrame.pack(); // Adatta le dimensioni del frame
+        registerFrame.setVisible(true); // Mostra il frame
+        registerFrame.setLocationRelativeTo(null); // Centra la finestra sullo schermo
+    }
+
+    /**
+     * Mostra la finestra per aggiungere parametri climatici.
+     */
+    private void openModCentroMonForm() {
+        JFrame registerFrame = new JFrame("Aggiungi Parametri Climatici"); // Frame per parametri climatici
+        registerFrame.setContentPane(new ModificaCentroMonitoraggioOperatore().getPanel()); // Imposta il contenuto del frame
         registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Configura la chiusura del frame
         registerFrame.pack(); // Adatta le dimensioni del frame
         registerFrame.setVisible(true); // Mostra il frame
